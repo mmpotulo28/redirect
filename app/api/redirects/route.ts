@@ -5,73 +5,73 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-	try {
-		const { userId } = await auth();
+  try {
+    const { userId } = await auth();
 
-		if (!userId) {
-			return new NextResponse("Unauthorized", { status: 401 });
-		}
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
 
-		const redirects = await prisma.redirect.findMany({
-			where: { userId },
-			orderBy: { createdAt: "desc" },
-			include: {
-				_count: {
-					select: { clicks: true },
-				},
-			},
-		});
+    const redirects = await prisma.redirect.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      include: {
+        _count: {
+          select: { clicks: true },
+        },
+      },
+    });
 
-		return NextResponse.json(redirects);
-	} catch (error) {
-		console.error("[REDIRECTS_GET]", error);
+    return NextResponse.json(redirects);
+  } catch (error) {
+    console.error("[REDIRECTS_GET]", error);
 
-		return new NextResponse("Internal Error", { status: 500 });
-	}
+    return new NextResponse("Internal Error", { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {
-	try {
-		const { userId } = await auth();
+  try {
+    const { userId } = await auth();
 
-		if (!userId) {
-			return new NextResponse("Unauthorized", { status: 401 });
-		}
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
 
-		const body = await req.json();
-		const {
-			targetUrl,
-			shortCode,
-			description,
-			startsAt,
-			expiresAt,
-			ogTitle,
-			ogDescription,
-			ogImage,
-		} = body;
+    const body = await req.json();
+    const {
+      targetUrl,
+      shortCode,
+      description,
+      startsAt,
+      expiresAt,
+      ogTitle,
+      ogDescription,
+      ogImage,
+    } = body;
 
-		// targetUrl is now optional
+    // targetUrl is now optional
 
-		const code = shortCode || nanoid(6);
+    const code = shortCode || nanoid(6);
 
-		const redirect = await prisma.redirect.create({
-			data: {
-				targetUrl,
-				shortCode: code,
-				description,
-				userId,
-				startsAt: startsAt ? new Date(startsAt) : null,
-				expiresAt: expiresAt ? new Date(expiresAt) : null,
-				ogTitle,
-				ogDescription,
-				ogImage,
-			},
-		});
+    const redirect = await prisma.redirect.create({
+      data: {
+        targetUrl,
+        shortCode: code,
+        description,
+        userId,
+        startsAt: startsAt ? new Date(startsAt) : null,
+        expiresAt: expiresAt ? new Date(expiresAt) : null,
+        ogTitle,
+        ogDescription,
+        ogImage,
+      },
+    });
 
-		return NextResponse.json(redirect);
-	} catch (error) {
-		console.error("[REDIRECTS_POST]", error);
+    return NextResponse.json(redirect);
+  } catch (error) {
+    console.error("[REDIRECTS_POST]", error);
 
-		return new NextResponse("Internal Error", { status: 500 });
-	}
+    return new NextResponse("Internal Error", { status: 500 });
+  }
 }

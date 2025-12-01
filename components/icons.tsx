@@ -387,9 +387,37 @@ export const QrCodeIcon: React.FC<IconSvgProps> = ({
     width={size || width}
     {...props}
   >
-    <rect x="3" y="3" width="7" height="7" stroke="currentColor" strokeWidth="1.5" />
-    <rect x="14" y="3" width="7" height="7" stroke="currentColor" strokeWidth="1.5" />
-    <rect x="14" y="14" width="7" height="7" stroke="currentColor" strokeWidth="1.5" />
-    <rect x="3" y="14" width="7" height="7" stroke="currentColor" strokeWidth="1.5" />
+    <rect
+      height="7"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      width="7"
+      x="3"
+      y="3"
+    />
+    <rect
+      height="7"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      width="7"
+      x="14"
+      y="3"
+    />
+    <rect
+      height="7"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      width="7"
+      x="14"
+      y="14"
+    />
+    <rect
+      height="7"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      width="7"
+      x="3"
+      y="14"
+    />
   </svg>
 );

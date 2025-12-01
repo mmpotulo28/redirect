@@ -1,7 +1,6 @@
 "use client";
 
 import { Breadcrumbs, BreadcrumbItem } from "@heroui/breadcrumbs";
-import { Link } from "@heroui/link";
 import { usePathname } from "next/navigation";
 
 export default function DashboardLayout({
@@ -20,6 +19,7 @@ export default function DashboardLayout({
      {paths.map((path, index) => {
       const href = `/${paths.slice(0, index + 1).join("/")}`;
       const isLast = index === paths.length - 1;
+
       return (
        <BreadcrumbItem key={path} href={href} isCurrent={isLast}>
         {path.charAt(0).toUpperCase() + path.slice(1)}
