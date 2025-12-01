@@ -22,19 +22,19 @@ const config = {
 				light: {
 					colors: {
 						primary: {
-							DEFAULT: "#0891b2", // cyan-600
+							DEFAULT: "#06b6d4", // cyan-500
 							foreground: "#ffffff",
 						},
-						focus: "#0891b2",
+						focus: "#06b6d4",
 					},
 				},
 				dark: {
 					colors: {
 						primary: {
-							DEFAULT: "#06b6d4", // cyan-500
-							foreground: "#ffffff",
+							DEFAULT: "#22d3ee", // cyan-400
+							foreground: "#000000",
 						},
-						focus: "#06b6d4",
+						focus: "#22d3ee",
 					},
 				},
 			},

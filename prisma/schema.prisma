@@ -9,7 +9,7 @@ datasource db {
 model Redirect {
   id          String   @id @default(cuid())
   shortCode   String   @unique
-  targetUrl   String
+  targetUrl   String?
   userId      String   // Clerk User ID
   description String?
   active      Boolean  @default(true)
