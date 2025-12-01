@@ -1,116 +1,123 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 
+import { prisma } from "@/lib/prisma";
+
 export async function createRedirect(formData: FormData) {
-	const { userId } = await auth();
-	if (!userId) throw new Error("Unauthorized");
+  const { userId } = await auth();
 
-	const targetUrl = formData.get("targetUrl") as string;
-	let shortCode = formData.get("shortCode") as string;
-	const description = formData.get("description") as string;
+  if (!userId) throw new Error("Unauthorized");
 
-	if (!targetUrl) throw new Error("Target URL is required");
+  const targetUrl = formData.get("targetUrl") as string;
+  let shortCode = formData.get("shortCode") as string;
+  const description = formData.get("description") as string;
 
-	if (!shortCode) {
-		shortCode = nanoid(6);
-	}
+  if (!targetUrl) throw new Error("Target URL is required");
 
-	await prisma.redirect.create({
-		data: {
-			targetUrl,
-			shortCode,
-			description,
-			userId,
-		},
-	});
+  if (!shortCode) {
+    shortCode = nanoid(6);
+  }
 
-	revalidatePath("/dashboard");
+  await prisma.redirect.create({
+    data: {
+      targetUrl,
+      shortCode,
+      description,
+      userId,
+    },
+  });
+
+  revalidatePath("/dashboard");
 }
 
 export async function updateRedirect(id: string, formData: FormData) {
-	const { userId } = await auth();
-	if (!userId) throw new Error("Unauthorized");
+  const { userId } = await auth();
 
-	const targetUrl = formData.get("targetUrl") as string;
-	const shortCode = formData.get("shortCode") as string;
-	const description = formData.get("description") as string;
-	const active = formData.get("active") === "true";
+  if (!userId) throw new Error("Unauthorized");
 
-	await prisma.redirect.update({
-		where: { id, userId },
-		data: {
-			targetUrl,
-			shortCode,
-			description,
-			active,
-		},
-	});
+  const targetUrl = formData.get("targetUrl") as string;
+  const shortCode = formData.get("shortCode") as string;
+  const description = formData.get("description") as string;
+  const active = formData.get("active") === "true";
 
-	revalidatePath("/dashboard");
-	revalidatePath(`/dashboard/${id}`);
+  await prisma.redirect.update({
+    where: { id, userId },
+    data: {
+      targetUrl,
+      shortCode,
+      description,
+      active,
+    },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/dashboard/${id}`);
 }
 
 export async function getRedirects() {
-	const { userId } = await auth();
-	if (!userId) return [];
+  const { userId } = await auth();
 
-	return await prisma.redirect.findMany({
-		where: { userId },
-		orderBy: { createdAt: "desc" },
-		include: {
-			_count: {
-				select: { clicks: true },
-			},
-		},
-	});
+  if (!userId) return [];
+
+  return await prisma.redirect.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    include: {
+      _count: {
+        select: { clicks: true },
+      },
+    },
+  });
 }
 
 export async function getRedirect(id: string) {
-	const { userId } = await auth();
-	if (!userId) return null;
+  const { userId } = await auth();
 
-	return await prisma.redirect.findUnique({
-		where: { id, userId },
-		include: {
-			clicks: {
-				orderBy: { timestamp: "desc" },
-				take: 100, // Limit recent clicks
-			},
-			_count: {
-				select: { clicks: true },
-			},
-		},
-	});
+  if (!userId) return null;
+
+  return await prisma.redirect.findUnique({
+    where: { id, userId },
+    include: {
+      clicks: {
+        orderBy: { timestamp: "desc" },
+        take: 100, // Limit recent clicks
+      },
+      _count: {
+        select: { clicks: true },
+      },
+    },
+  });
 }
 
 export async function getRedirectAnalytics(id: string) {
-	const { userId } = await auth();
-	if (!userId) return null;
+  const { userId } = await auth();
 
-	const redirect = await prisma.redirect.findUnique({
-		where: { id, userId },
-	});
+  if (!userId) return null;
 
-	if (!redirect) return null;
+  const redirect = await prisma.redirect.findUnique({
+    where: { id, userId },
+  });
 
-	const clicks = await prisma.click.findMany({
-		where: { redirectId: id },
-		orderBy: { timestamp: "asc" },
-	});
+  if (!redirect) return null;
 
-	return clicks;
+  const clicks = await prisma.click.findMany({
+    where: { redirectId: id },
+    orderBy: { timestamp: "asc" },
+  });
+
+  return clicks;
 }
 
 export async function deleteRedirect(id: string) {
-	const { userId } = await auth();
-	if (!userId) throw new Error("Unauthorized");
+  const { userId } = await auth();
 
-	await prisma.redirect.delete({
-		where: { id, userId },
-	});
-	revalidatePath("/dashboard");
+  if (!userId) throw new Error("Unauthorized");
+
+  await prisma.redirect.delete({
+    where: { id, userId },
+  });
+  revalidatePath("/dashboard");
 }

@@ -1,6 +1,5 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
-import { Link } from "@heroui/link";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
@@ -49,7 +48,9 @@ export default function RootLayout({
             </main>
             <footer className="w-full flex flex-col items-center justify-center py-8 border-t border-default-100">
               <div className="flex items-center gap-1 text-current">
-                <span className="text-default-500 text-sm">© {new Date().getFullYear()} LinkFlow. All rights reserved.</span>
+                <span className="text-default-500 text-sm">
+                  © {new Date().getFullYear()} LinkFlow. All rights reserved.
+                </span>
               </div>
             </footer>
           </div>

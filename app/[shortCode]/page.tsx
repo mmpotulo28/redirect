@@ -1,43 +1,48 @@
-import { prisma } from '@/lib/prisma'
-import { notFound } from 'next/navigation'
-import { headers } from 'next/headers'
-import { UAParser } from 'ua-parser-js'
-import { RedirectInterstitial } from '@/components/redirect-interstitial'
+import { notFound } from "next/navigation";
+import { headers } from "next/headers";
+import { UAParser } from "ua-parser-js";
 
-export default async function RedirectPage({ params }: { params: Promise<{ shortCode: string }> }) {
- const { shortCode } = await params
+import { prisma } from "@/lib/prisma";
+import { RedirectInterstitial } from "@/components/redirect-interstitial";
 
- const redirectEntry = await prisma.redirect.findUnique({
-  where: { shortCode },
- })
+export default async function RedirectPage({
+  params,
+}: {
+  params: Promise<{ shortCode: string }>;
+}) {
+  const { shortCode } = await params;
 
- if (!redirectEntry || !redirectEntry.active) {
-  notFound()
- }
+  const redirectEntry = await prisma.redirect.findUnique({
+    where: { shortCode },
+  });
 
- // Log click
- const headersList = await headers()
- const userAgent = headersList.get('user-agent') || ''
- const ip = headersList.get('x-forwarded-for') || 'unknown'
- const referrer = headersList.get('referer')
+  if (!redirectEntry || !redirectEntry.active) {
+    notFound();
+  }
 
- // Parse User Agent
- const parser = new UAParser(userAgent)
- const browser = parser.getBrowser().name
- const os = parser.getOS().name
- const device = parser.getDevice().type || 'desktop'
+  // Log click
+  const headersList = await headers();
+  const userAgent = headersList.get("user-agent") || "";
+  const ip = headersList.get("x-forwarded-for") || "unknown";
+  const referrer = headersList.get("referer");
 
- await prisma.click.create({
-  data: {
-   redirectId: redirectEntry.id,
-   userAgent,
-   browser,
-   os,
-   device,
-   ip: Array.isArray(ip) ? ip[0] : ip,
-   referrer,
-  },
- })
+  // Parse User Agent
+  const parser = new UAParser(userAgent);
+  const browser = parser.getBrowser().name;
+  const os = parser.getOS().name;
+  const device = parser.getDevice().type || "desktop";
 
- return <RedirectInterstitial targetUrl={redirectEntry.targetUrl} />
+  await prisma.click.create({
+    data: {
+      redirectId: redirectEntry.id,
+      userAgent,
+      browser,
+      os,
+      device,
+      ip: Array.isArray(ip) ? ip[0] : ip,
+      referrer,
+    },
+  });
+
+  return <RedirectInterstitial targetUrl={redirectEntry.targetUrl} />;
 }

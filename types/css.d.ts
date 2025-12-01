@@ -1,5 +1,5 @@
 // css declaration file
 declare module "*.css" {
-	const content: { [className: string]: string };
-	export default content;
+  const content: { [className: string]: string };
+  export default content;
 }

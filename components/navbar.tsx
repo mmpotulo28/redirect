@@ -5,15 +5,19 @@ import {
   NavbarItem,
 } from "@heroui/navbar";
 import NextLink from "next/link";
-
-import { ThemeSwitch } from "@/components/theme-switch";
-import { Logo } from "@/components/icons";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { Button } from "@heroui/button";
 
+import { ThemeSwitch } from "@/components/theme-switch";
+import { Logo } from "@/components/icons";
+
 export const Navbar = () => {
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky" className="bg-background/70 backdrop-blur-md border-b border-default-100">
+    <HeroUINavbar
+      className="bg-background/70 backdrop-blur-md border-b border-default-100"
+      maxWidth="xl"
+      position="sticky"
+    >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-2" href="/">
@@ -37,10 +41,10 @@ export const Navbar = () => {
           <SignedOut>
             <SignInButton mode="modal">
               <Button
-                variant="shadow"
-                color="primary"
                 className="font-medium"
+                color="primary"
                 radius="full"
+                variant="shadow"
               >
                 Sign In
               </Button>
@@ -50,8 +54,8 @@ export const Navbar = () => {
             <UserButton
               appearance={{
                 elements: {
-                  avatarBox: "w-9 h-9 border-2 border-primary/20"
-                }
+                  avatarBox: "w-9 h-9 border-2 border-primary/20",
+                },
               }}
             />
           </SignedIn>
@@ -65,7 +69,9 @@ export const Navbar = () => {
         </SignedIn>
         <SignedOut>
           <SignInButton mode="modal">
-            <Button size="sm" color="primary" variant="flat">Sign In</Button>
+            <Button color="primary" size="sm" variant="flat">
+              Sign In
+            </Button>
           </SignInButton>
         </SignedOut>
       </NavbarContent>
