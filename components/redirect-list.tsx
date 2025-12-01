@@ -9,6 +9,7 @@ import { Spinner } from "@heroui/spinner";
 import { mutate } from "swr";
 
 import { EditRedirectModal } from "./edit-redirect-modal";
+import { QRCodeModal } from "./qr-code-modal";
 
 import { useRedirects, deleteRedirect } from "@/hooks/use-redirects";
 
@@ -19,15 +20,20 @@ type Redirect = {
  description: string | null;
  active: boolean;
  createdAt: Date;
+ startsAt: string | null;
+ expiresAt: string | null;
+ ogTitle: string | null;
+ ogDescription: string | null;
+ ogImage: string | null;
+ password: string | null;
  _count: { clicks: number };
 };
 
 export function RedirectList() {
  const { redirects, isLoading } = useRedirects();
  const [editingRedirect, setEditingRedirect] = useState<Redirect | null>(null);
- const router = useRouter();
-
- const handleDelete = async (id: string) => {
+ const [viewingQRCode, setViewingQRCode] = useState<Redirect | null>(null);
+ const router = useRouter(); const handleDelete = async (id: string) => {
   if (confirm("Are you sure you want to delete this redirect?")) {
    try {
     await deleteRedirect(id);
@@ -99,6 +105,13 @@ export function RedirectList() {
          <Button
           size="sm"
           variant="flat"
+          onPress={() => setViewingQRCode(redirect)}
+         >
+          QR
+         </Button>
+         <Button
+          size="sm"
+          variant="flat"
           onPress={() => router.push(`/dashboard/${redirect.id}`)}
          >
           View
@@ -133,6 +146,13 @@ export function RedirectList() {
      isOpen={!!editingRedirect}
      redirect={editingRedirect}
      onClose={() => setEditingRedirect(null)}
+    />
+   )}
+   {viewingQRCode && (
+    <QRCodeModal
+     isOpen={!!viewingQRCode}
+     onClose={() => setViewingQRCode(null)}
+     shortCode={viewingQRCode.shortCode}
     />
    )}
   </>

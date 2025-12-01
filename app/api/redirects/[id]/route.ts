@@ -3,98 +3,106 @@ import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
 
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  try {
-    const { userId } = await auth();
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+	try {
+		const { userId } = await auth();
 
-    if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
+		if (!userId) {
+			return new NextResponse("Unauthorized", { status: 401 });
+		}
 
-    const { id } = await params;
+		const { id } = await params;
 
-    const redirect = await prisma.redirect.findUnique({
-      where: { id, userId },
-      include: {
-        clicks: {
-          orderBy: { timestamp: "desc" },
-          take: 100,
-        },
-        _count: {
-          select: { clicks: true },
-        },
-      },
-    });
+		const redirect = await prisma.redirect.findUnique({
+			where: { id, userId },
+			include: {
+				clicks: {
+					orderBy: { timestamp: "desc" },
+					take: 100,
+				},
+				_count: {
+					select: { clicks: true },
+				},
+			},
+		});
 
-    if (!redirect) {
-      return new NextResponse("Not Found", { status: 404 });
-    }
+		if (!redirect) {
+			return new NextResponse("Not Found", { status: 404 });
+		}
 
-    return NextResponse.json(redirect);
-  } catch (error) {
-    console.error("[REDIRECT_GET]", error);
+		return NextResponse.json(redirect);
+	} catch (error) {
+		console.error("[REDIRECT_GET]", error);
 
-    return new NextResponse("Internal Error", { status: 500 });
-  }
+		return new NextResponse("Internal Error", { status: 500 });
+	}
 }
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  try {
-    const { userId } = await auth();
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+	try {
+		const { userId } = await auth();
 
-    if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
+		if (!userId) {
+			return new NextResponse("Unauthorized", { status: 401 });
+		}
 
-    const { id } = await params;
-    const body = await req.json();
-    const { targetUrl, shortCode, description, active } = body;
+		const { id } = await params;
+		const body = await req.json();
+		const {
+			targetUrl,
+			shortCode,
+			description,
+			active,
+			startsAt,
+			expiresAt,
+			ogTitle,
+			ogDescription,
+			ogImage,
+			password,
+		} = body;
 
-    const redirect = await prisma.redirect.update({
-      where: { id, userId },
-      data: {
-        targetUrl,
-        shortCode,
-        description,
-        active,
-      },
-    });
+		const redirect = await prisma.redirect.update({
+			where: { id, userId },
+			data: {
+				targetUrl,
+				shortCode,
+				description,
+				active,
+				startsAt: startsAt ? new Date(startsAt) : startsAt === null ? null : undefined,
+				expiresAt: expiresAt ? new Date(expiresAt) : expiresAt === null ? null : undefined,
+				ogTitle,
+				ogDescription,
+				ogImage,
+				password: password || null,
+			},
+		});
 
-    return NextResponse.json(redirect);
-  } catch (error) {
-    console.error("[REDIRECT_PATCH]", error);
+		return NextResponse.json(redirect);
+	} catch (error) {
+		console.error("[REDIRECT_PATCH]", error);
 
-    return new NextResponse("Internal Error", { status: 500 });
-  }
+		return new NextResponse("Internal Error", { status: 500 });
+	}
 }
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  try {
-    const { userId } = await auth();
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+	try {
+		const { userId } = await auth();
 
-    if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
+		if (!userId) {
+			return new NextResponse("Unauthorized", { status: 401 });
+		}
 
-    const { id } = await params;
+		const { id } = await params;
 
-    await prisma.redirect.delete({
-      where: { id, userId },
-    });
+		await prisma.redirect.delete({
+			where: { id, userId },
+		});
 
-    return new NextResponse(null, { status: 204 });
-  } catch (error) {
-    console.error("[REDIRECT_DELETE]", error);
+		return new NextResponse(null, { status: 204 });
+	} catch (error) {
+		console.error("[REDIRECT_DELETE]", error);
 
-    return new NextResponse("Internal Error", { status: 500 });
-  }
+		return new NextResponse("Internal Error", { status: 500 });
+	}
 }

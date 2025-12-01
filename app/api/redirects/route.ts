@@ -39,7 +39,16 @@ export async function POST(req: Request) {
 		}
 
 		const body = await req.json();
-		const { targetUrl, shortCode, description } = body;
+		const {
+			targetUrl,
+			shortCode,
+			description,
+			startsAt,
+			expiresAt,
+			ogTitle,
+			ogDescription,
+			ogImage,
+		} = body;
 
 		// targetUrl is now optional
 
@@ -51,6 +60,11 @@ export async function POST(req: Request) {
 				shortCode: code,
 				description,
 				userId,
+				startsAt: startsAt ? new Date(startsAt) : null,
+				expiresAt: expiresAt ? new Date(expiresAt) : null,
+				ogTitle,
+				ogDescription,
+				ogImage,
 			},
 		});
 

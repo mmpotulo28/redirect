@@ -65,6 +65,12 @@ export async function updateRedirect(
 		shortCode?: string;
 		description?: string;
 		active?: boolean;
+		startsAt?: string | null;
+		expiresAt?: string | null;
+		ogTitle?: string;
+		ogDescription?: string;
+		ogImage?: string;
+		password?: string;
 	},
 ) {
 	const res = await fetch(`/api/redirects/${id}`, {
