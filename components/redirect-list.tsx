@@ -10,6 +10,7 @@ import { mutate } from "swr";
 
 import { EditRedirectModal } from "./edit-redirect-modal";
 import { QRCodeModal } from "./qr-code-modal";
+import { EditIcon, DeleteIcon, QrCodeIcon } from "./icons";
 
 import { useRedirects, deleteRedirect } from "@/hooks/use-redirects";
 
@@ -62,78 +63,66 @@ export function RedirectList() {
 
  return (
   <>
-   <div className="grid gap-4 mt-8">
+   <div className="grid gap-4">
     {redirects.map((redirect: Redirect) => (
      <Card
       key={redirect.id}
-      className="cursor-pointer hover:bg-content2 transition-colors"
-      onClick={() => router.push(`/dashboard/${redirect.id}`)}
+      className="border-none shadow-sm hover:shadow-md transition-shadow"
      >
-      <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-       <div className="flex flex-col w-full sm:w-auto overflow-hidden text-left">
+      <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4">
+       <div
+        className="flex flex-col w-full sm:w-auto overflow-hidden text-left gap-1 cursor-pointer"
+        onClick={() => router.push(`/dashboard/${redirect.id}`)}
+       >
         <div className="flex items-center gap-2">
-         <Link
-          isExternal
-          className="text-lg font-bold break-all"
-          href={`/${redirect.shortCode}`}
-          onClick={(e) => e.stopPropagation()}
-         >
-          /{redirect.shortCode}
-         </Link>
+         <span className="text-lg font-bold text-primary">/{redirect.shortCode}</span>
          {!redirect.active && (
-          <span className="text-tiny bg-danger/10 text-danger px-2 py-0.5 rounded-full">
+          <span className="text-tiny bg-danger/10 text-danger px-2 py-0.5 rounded-full font-medium">
            Inactive
           </span>
          )}
         </div>
-        <span className="text-small text-default-500 truncate max-w-full sm:max-w-md">
-         {redirect.targetUrl || (
-          <span className="text-warning italic">Pending Target</span>
-         )}
-        </span>
+        <div className="flex items-center gap-2 text-small text-default-500">
+         <span className="truncate max-w-[200px] sm:max-w-md">
+          {redirect.targetUrl || <span className="text-warning italic">Pending Target</span>}
+         </span>
+        </div>
         {redirect.description && (
-         <span className="text-tiny text-default-400 mt-1">
+         <span className="text-tiny text-default-400">
           {redirect.description}
          </span>
         )}
        </div>
-       <div className="flex items-center justify-between w-full sm:w-auto gap-4">
-        <div className="text-small whitespace-nowrap">
-         {redirect._count.clicks} clicks
+       <div className="flex items-center justify-between w-full sm:w-auto gap-6">
+        <div className="flex flex-col items-end">
+         <span className="text-2xl font-bold text-default-900">{redirect._count.clicks}</span>
+         <span className="text-tiny text-default-400 uppercase font-bold tracking-wider">Clicks</span>
         </div>
-        <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-1">
          <Button
+          isIconOnly
           size="sm"
-          variant="flat"
+          variant="light"
           onPress={() => setViewingQRCode(redirect)}
          >
-          QR
+          <QrCodeIcon size={20} />
          </Button>
          <Button
+          isIconOnly
           size="sm"
-          variant="flat"
-          onPress={() => router.push(`/dashboard/${redirect.id}`)}
+          variant="light"
+          onPress={() => setEditingRedirect(redirect)}
          >
-          View
-         </Button>
-         <Button
-          size="sm"
-          variant="flat"
-          onPress={() => {
-           setEditingRedirect(redirect);
-          }}
-         >
-          Edit
+          <EditIcon size={20} />
          </Button>
          <Button
           color="danger"
+          isIconOnly
           size="sm"
           variant="light"
-          onPress={() => {
-           handleDelete(redirect.id);
-          }}
+          onPress={() => handleDelete(redirect.id)}
          >
-          Delete
+          <DeleteIcon size={20} />
          </Button>
         </div>
        </div>
