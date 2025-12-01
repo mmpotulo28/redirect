@@ -11,6 +11,7 @@ export async function createRedirect(formData: FormData) {
 
 	const targetUrl = formData.get("targetUrl") as string;
 	let shortCode = formData.get("shortCode") as string;
+	const description = formData.get("description") as string;
 
 	if (!targetUrl) throw new Error("Target URL is required");
 
@@ -22,11 +23,35 @@ export async function createRedirect(formData: FormData) {
 		data: {
 			targetUrl,
 			shortCode,
+			description,
 			userId,
 		},
 	});
 
 	revalidatePath("/dashboard");
+}
+
+export async function updateRedirect(id: string, formData: FormData) {
+	const { userId } = await auth();
+	if (!userId) throw new Error("Unauthorized");
+
+	const targetUrl = formData.get("targetUrl") as string;
+	const shortCode = formData.get("shortCode") as string;
+	const description = formData.get("description") as string;
+	const active = formData.get("active") === "true";
+
+	await prisma.redirect.update({
+		where: { id, userId },
+		data: {
+			targetUrl,
+			shortCode,
+			description,
+			active,
+		},
+	});
+
+	revalidatePath("/dashboard");
+	revalidatePath(`/dashboard/${id}`);
 }
 
 export async function getRedirects() {
@@ -42,6 +67,42 @@ export async function getRedirects() {
 			},
 		},
 	});
+}
+
+export async function getRedirect(id: string) {
+	const { userId } = await auth();
+	if (!userId) return null;
+
+	return await prisma.redirect.findUnique({
+		where: { id, userId },
+		include: {
+			clicks: {
+				orderBy: { timestamp: "desc" },
+				take: 100, // Limit recent clicks
+			},
+			_count: {
+				select: { clicks: true },
+			},
+		},
+	});
+}
+
+export async function getRedirectAnalytics(id: string) {
+	const { userId } = await auth();
+	if (!userId) return null;
+
+	const redirect = await prisma.redirect.findUnique({
+		where: { id, userId },
+	});
+
+	if (!redirect) return null;
+
+	const clicks = await prisma.click.findMany({
+		where: { redirectId: id },
+		orderBy: { timestamp: "asc" },
+	});
+
+	return clicks;
 }
 
 export async function deleteRedirect(id: string) {

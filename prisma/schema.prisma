@@ -1,6 +1,5 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../lib/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -12,6 +11,8 @@ model Redirect {
   shortCode   String   @unique
   targetUrl   String
   userId      String   // Clerk User ID
+  description String?
+  active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   clicks      Click[]
@@ -25,6 +26,9 @@ model Click {
   redirect    Redirect @relation(fields: [redirectId], references: [id], onDelete: Cascade)
   timestamp   DateTime @default(now())
   userAgent   String?
+  browser     String?
+  os          String?
+  device      String?
   ip          String?
   referrer    String?
   country     String?

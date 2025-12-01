@@ -1,22 +1,45 @@
-import {heroui} from "@heroui/theme"
+import { heroui } from "@heroui/theme";
 
 /** @type {import('tailwindcss').Config} */
 const config = {
-  content: [
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
-    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}"
-  ],
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ["var(--font-sans)"],
-        mono: ["var(--font-mono)"],
-      },
-    },
-  },
-  darkMode: "class",
-  plugins: [heroui()],
-}
+	content: [
+		"./components/**/*.{js,ts,jsx,tsx,mdx}",
+		"./app/**/*.{js,ts,jsx,tsx,mdx}",
+		"./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
+	],
+	theme: {
+		extend: {
+			fontFamily: {
+				sans: ["var(--font-sans)"],
+				mono: ["var(--font-mono)"],
+			},
+		},
+	},
+	darkMode: "class",
+	plugins: [
+		heroui({
+			themes: {
+				light: {
+					colors: {
+						primary: {
+							DEFAULT: "#0891b2", // cyan-600
+							foreground: "#ffffff",
+						},
+						focus: "#0891b2",
+					},
+				},
+				dark: {
+					colors: {
+						primary: {
+							DEFAULT: "#06b6d4", // cyan-500
+							foreground: "#ffffff",
+						},
+						focus: "#06b6d4",
+					},
+				},
+			},
+		}),
+	],
+};
 
 module.exports = config;

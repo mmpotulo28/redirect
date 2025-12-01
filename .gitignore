@@ -38,7 +38,7 @@ pnpm-lock.yaml
 yarn.lock
 package-lock.json
 bun.lockb
-/app/generated/prisma
+/lib/generated/*
 
 # env files
 .env

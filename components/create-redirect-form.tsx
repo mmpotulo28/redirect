@@ -1,21 +1,40 @@
 'use client'
 
-import { createRedirect } from '@/app/actions'
+import { createRedirect } from '@/hooks/use-redirects'
 import { Button } from '@heroui/button'
 import { Input } from '@heroui/input'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import { mutate } from 'swr'
 
 export function CreateRedirectForm() {
  const ref = useRef<HTMLFormElement>(null)
+ const [isLoading, setIsLoading] = useState(false)
+
+ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault()
+  setIsLoading(true)
+  const formData = new FormData(e.currentTarget)
+
+  try {
+   await createRedirect({
+    targetUrl: formData.get('targetUrl') as string,
+    shortCode: formData.get('shortCode') as string,
+    description: formData.get('description') as string,
+   })
+   mutate('/api/redirects')
+   ref.current?.reset()
+  } catch (error) {
+   console.error(error)
+  } finally {
+   setIsLoading(false)
+  }
+ }
 
  return (
   <form
    ref={ref}
-   action={async (formData) => {
-    await createRedirect(formData)
-    ref.current?.reset()
-   }}
-   className="flex gap-4 items-end"
+   onSubmit={handleSubmit}
+   className="flex flex-col md:flex-row gap-4 items-stretch md:items-end"
   >
    <Input
     name="targetUrl"
@@ -29,9 +48,15 @@ export function CreateRedirectForm() {
     name="shortCode"
     label="Short Code (Optional)"
     placeholder="custom-code"
-    className="w-48"
+    className="w-full md:w-48"
    />
-   <Button type="submit" color="primary">
+   <Input
+    name="description"
+    label="Description (Optional)"
+    placeholder="Marketing campaign"
+    className="w-full md:w-64"
+   />
+   <Button type="submit" color="primary" className="w-full md:w-auto" isLoading={isLoading}>
     Create
    </Button>
   </form>

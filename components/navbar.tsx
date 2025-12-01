@@ -4,23 +4,25 @@ import {
   NavbarBrand,
   NavbarItem,
 } from "@heroui/navbar";
-import { Link } from "@heroui/link";
 import NextLink from "next/link";
 
-import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { GithubIcon, Logo } from "@/components/icons";
+import { Logo } from "@/components/icons";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { Button } from "@heroui/button";
 
 export const Navbar = () => {
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky">
+    <HeroUINavbar maxWidth="xl" position="sticky" className="bg-background/70 backdrop-blur-md border-b border-default-100">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex justify-start items-center gap-1" href="/">
-            <Logo />
-            <p className="font-bold text-inherit">Redirect</p>
+          <NextLink className="flex justify-start items-center gap-2" href="/">
+            <div className="text-primary">
+              <Logo />
+            </div>
+            <p className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+              LinkFlow
+            </p>
           </NextLink>
         </NavbarBrand>
       </NavbarContent>
@@ -29,39 +31,44 @@ export const Navbar = () => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        <NavbarItem className="hidden sm:flex gap-2">
-          <Link isExternal aria-label="Github" href={siteConfig.links.github}>
-            <GithubIcon className="text-default-500" />
-          </Link>
+        <NavbarItem className="hidden sm:flex gap-4 items-center">
           <ThemeSwitch />
-        </NavbarItem>
-        <NavbarItem className="hidden md:flex">
+          <div className="h-6 w-px bg-default-200" />
           <SignedOut>
             <SignInButton mode="modal">
-              <Button variant="flat" color="primary">Sign In</Button>
+              <Button
+                variant="shadow"
+                color="primary"
+                className="font-medium"
+                radius="full"
+              >
+                Sign In
+              </Button>
             </SignInButton>
           </SignedOut>
           <SignedIn>
-            <UserButton />
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: "w-9 h-9 border-2 border-primary/20"
+                }
+              }}
+            />
           </SignedIn>
         </NavbarItem>
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <Link isExternal aria-label="Github" href={siteConfig.links.github}>
-          <GithubIcon className="text-default-500" />
-        </Link>
         <ThemeSwitch />
-        <SignedOut>
-          <SignInButton mode="modal">
-            <Button size="sm" variant="flat" color="primary">Sign In</Button>
-          </SignInButton>
-        </SignedOut>
         <SignedIn>
           <UserButton />
         </SignedIn>
+        <SignedOut>
+          <SignInButton mode="modal">
+            <Button size="sm" color="primary" variant="flat">Sign In</Button>
+          </SignInButton>
+        </SignedOut>
       </NavbarContent>
     </HeroUINavbar>
   );
 };
-

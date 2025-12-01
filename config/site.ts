@@ -1,8 +1,8 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-	name: "Redirect",
-	description: "Simple URL shortener and tracker.",
+	name: "LinkFlow",
+	description: "Advanced URL shortener with detailed analytics and smart redirection.",
 	navItems: [
 		{
 			label: "Home",
