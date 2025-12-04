@@ -26,6 +26,12 @@ type Redirect = {
  ogDescription: string | null;
  ogImage: string | null;
  password: string | null;
+ targetingRules?: {
+  id: string;
+  type: "device" | "geo";
+  key: string;
+  targetUrl: string;
+ }[];
  _count: { clicks: number };
 };
 

@@ -16,6 +16,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 		const redirect = await prisma.redirect.findUnique({
 			where: { id, userId },
 			include: {
+				targetingRules: true,
 				clicks: {
 					orderBy: { timestamp: "desc" },
 					take: 100,
@@ -59,6 +60,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 			ogDescription,
 			ogImage,
 			password,
+			targetingRules,
 		} = body;
 
 		const redirect = await prisma.redirect.update({
@@ -74,6 +76,18 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 				ogDescription,
 				ogImage,
 				password: password || null,
+				targetingRules: targetingRules
+					? {
+							deleteMany: {},
+							create: targetingRules.map(
+								(rule: { type: string; key: string; targetUrl: string }) => ({
+									type: rule.type,
+									key: rule.key,
+									targetUrl: rule.targetUrl,
+								}),
+							),
+						}
+					: undefined,
 			},
 		});
 

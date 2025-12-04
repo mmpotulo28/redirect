@@ -57,6 +57,7 @@ export default async function RedirectPage({ params }: Props) {
 
  const redirectEntry = await prisma.redirect.findUnique({
   where: { shortCode },
+  include: { targetingRules: true },
  });
 
  if (!redirectEntry || !redirectEntry.active) {
@@ -90,19 +91,39 @@ export default async function RedirectPage({ params }: Props) {
  const ip = Array.isArray(ipHeader) ? ipHeader[0] : ipHeader.split(",")[0];
  const referrer = headersList.get("referer");
 
+ // Parse User Agent & Geo
+ const parser = new UAParser(userAgent);
+ const browser = parser.getBrowser().name;
+ const os = parser.getOS().name;
+ const device = parser.getDevice().type || "desktop";
+ const geo = await getGeoData(ip);
+ const country = geo?.country || "Unknown";
+ const city = geo?.city || "Unknown";
+
+ // Check Targeting Rules
+ let finalTargetUrl = redirectEntry.targetUrl;
+
+ if (redirectEntry.targetingRules && redirectEntry.targetingRules.length > 0) {
+  for (const rule of redirectEntry.targetingRules) {
+   if (rule.type === "device") {
+    if (
+     os?.toLowerCase().includes(rule.key.toLowerCase()) ||
+     device?.toLowerCase().includes(rule.key.toLowerCase())
+    ) {
+     finalTargetUrl = rule.targetUrl;
+     break;
+    }
+   } else if (rule.type === "geo") {
+    if (country?.toLowerCase() === rule.key.toLowerCase()) {
+     finalTargetUrl = rule.targetUrl;
+     break;
+    }
+   }
+  }
+ }
+
  // Only log if not a bot
  if (!isbot(userAgent)) {
-  // Parse User Agent
-  const parser = new UAParser(userAgent);
-  const browser = parser.getBrowser().name;
-  const os = parser.getOS().name;
-  const device = parser.getDevice().type || "desktop";
-
-  // Parse Geo Location
-  const geo = await getGeoData(ip);
-  const country = geo?.country || "Unknown";
-  const city = geo?.city || "Unknown";
-
   await prisma.click.create({
    data: {
     redirectId: redirectEntry.id,
@@ -118,9 +139,9 @@ export default async function RedirectPage({ params }: Props) {
   });
  }
 
- if (!redirectEntry.targetUrl) {
+ if (!finalTargetUrl) {
   return <RedirectPending />;
  }
 
- return <RedirectInterstitial targetUrl={redirectEntry.targetUrl} />;
+ return <RedirectInterstitial targetUrl={finalTargetUrl} />;
 }
