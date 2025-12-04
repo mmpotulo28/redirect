@@ -13,6 +13,7 @@ import { Tabs, Tab } from "@heroui/tabs";
 import { useState, useEffect, useRef } from "react";
 import QRCode from "react-qr-code";
 import { Download, Copy, Check, Save, Edit } from "lucide-react";
+import { addToast } from "@heroui/toast";
 import { upload } from "@vercel/blob/client";
 
 import { updateRedirectQRCode } from "@/app/actions";
@@ -419,6 +420,11 @@ export function QRCodeModal({
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("Failed to save QR code:", error);
+      addToast({
+        title: "Save Failed",
+        description: "Failed to save QR code. Please try again.",
+        color: "danger",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -587,7 +593,11 @@ export function QRCodeModal({
 
                                       setCustomLogo(newBlob.url);
                                     } catch {
-                                      // Handle error
+                                      addToast({
+                                        title: "Upload Failed",
+                                        description: "Failed to upload logo. Please try again.",
+                                        color: "danger",
+                                      });
                                     } finally {
                                       setIsUploading(false);
                                     }

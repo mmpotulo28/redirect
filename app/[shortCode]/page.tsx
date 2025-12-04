@@ -107,8 +107,8 @@ export default async function RedirectPage({ params }: Props) {
   for (const rule of redirectEntry.targetingRules) {
    if (rule.type === "device") {
     if (
-     os?.toLowerCase().includes(rule.key.toLowerCase()) ||
-     device?.toLowerCase().includes(rule.key.toLowerCase())
+     os?.toLowerCase().trim() === rule.key.toLowerCase().trim() ||
+     device?.toLowerCase().trim() === rule.key.toLowerCase().trim()
     ) {
      finalTargetUrl = rule.targetUrl;
      break;
