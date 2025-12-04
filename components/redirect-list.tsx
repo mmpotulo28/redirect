@@ -159,17 +159,9 @@ export function RedirectList() {
      {filteredRedirects.map((redirect: Redirect) => (
       <Card
        key={redirect.id}
-       className="border-none shadow-sm hover:shadow-md transition-all duration-200 bg-content1 cursor-pointer"
-       isPressable={false}
-       role="button"
-       tabIndex={0}
-       onClick={() => router.push(`/dashboard/${redirect.id}`)}
-       onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-         e.preventDefault();
-         router.push(`/dashboard/${redirect.id}`);
-        }
-       }}
+       isPressable
+       className="border-none shadow-sm hover:shadow-md transition-all duration-200 bg-content1"
+       onPress={() => router.push(`/dashboard/${redirect.id}`)}
       >
        <CardBody className="p-5">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
