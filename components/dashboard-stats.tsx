@@ -2,8 +2,7 @@
 
 import { Card, CardBody } from "@heroui/card";
 import { Spinner } from "@heroui/spinner";
-
-import { ChartIcon } from "./icons";
+import { Link2, MousePointerClick } from "lucide-react";
 
 import { useRedirects } from "@/hooks/use-redirects";
 
@@ -17,12 +16,12 @@ export function DashboardStats() {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-        <Card>
+        <Card className="border-none shadow-sm">
           <CardBody className="flex flex-row items-center gap-4 p-6">
             <Spinner size="sm" />
           </CardBody>
         </Card>
-        <Card>
+        <Card className="border-none shadow-sm">
           <CardBody className="flex flex-row items-center gap-4 p-6">
             <Spinner size="sm" />
           </CardBody>
@@ -39,30 +38,30 @@ export function DashboardStats() {
     ) || 0;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-      <Card className="border-none bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-900/10">
-        <CardBody className="flex flex-row items-center gap-4 p-6">
-          <div className="p-3 bg-primary/10 rounded-full text-primary">
-            <ChartIcon size={24} />
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+      <Card className="border-none shadow-sm bg-content1">
+        <CardBody className="flex flex-row items-center gap-6 p-6">
+          <div className="p-4 bg-primary/10 rounded-2xl text-primary">
+            <Link2 size={28} />
           </div>
-          <div>
-            <p className="text-sm text-default-500 font-medium">
+          <div className="flex flex-col gap-1">
+            <p className="text-sm text-default-500 font-medium uppercase tracking-wider">
               Total Redirects
             </p>
-            <h3 className="text-2xl font-bold text-default-900">
+            <h3 className="text-3xl font-bold text-default-900">
               {totalRedirects}
             </h3>
           </div>
         </CardBody>
       </Card>
-      <Card className="border-none bg-gradient-to-br from-secondary-50 to-secondary-100 dark:from-secondary-900/20 dark:to-secondary-900/10">
-        <CardBody className="flex flex-row items-center gap-4 p-6">
-          <div className="p-3 bg-secondary/10 rounded-full text-secondary">
-            <ChartIcon size={24} />
+      <Card className="border-none shadow-sm bg-content1">
+        <CardBody className="flex flex-row items-center gap-6 p-6">
+          <div className="p-4 bg-secondary/10 rounded-2xl text-secondary">
+            <MousePointerClick size={28} />
           </div>
-          <div>
-            <p className="text-sm text-default-500 font-medium">Total Clicks</p>
-            <h3 className="text-2xl font-bold text-default-900">
+          <div className="flex flex-col gap-1">
+            <p className="text-sm text-default-500 font-medium uppercase tracking-wider">Total Clicks</p>
+            <h3 className="text-3xl font-bold text-default-900">
               {totalClicks}
             </h3>
           </div>

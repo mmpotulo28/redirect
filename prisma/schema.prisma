@@ -23,6 +23,8 @@ model Redirect {
   updatedAt   DateTime @updatedAt
   clicks      Click[]
   targetingRules TargetingRule[]
+  tags        String[]
+  qrCodeUrl   String?
 
   @@index([userId])
 }

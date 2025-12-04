@@ -52,6 +52,7 @@ export async function POST(req: Request) {
 			ogImage,
 			password,
 			targetingRules,
+			tags,
 		} = body;
 
 		// targetUrl is now optional
@@ -71,6 +72,7 @@ export async function POST(req: Request) {
 				ogDescription,
 				ogImage,
 				password,
+				tags: tags || [],
 				targetingRules: targetingRules
 					? {
 							create: targetingRules.map(

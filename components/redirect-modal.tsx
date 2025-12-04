@@ -14,6 +14,7 @@ import { Tabs, Tab } from "@heroui/tabs";
 import { Select, SelectItem } from "@heroui/select";
 import { useState, useEffect } from "react";
 import { mutate } from "swr";
+import { Chip } from "@heroui/chip";
 
 import { PlusIcon, DeleteIcon } from "./icons";
 
@@ -38,6 +39,7 @@ export type Redirect = {
  ogImage: string | null;
  password?: string | null;
  targetingRules?: TargetingRule[];
+ tags?: string[];
 };
 
 interface RedirectModalProps {
@@ -53,6 +55,8 @@ export function RedirectModal({ isOpen, onClose, initialData }: RedirectModalPro
  // Form State
  const [active, setActive] = useState(true);
  const [rules, setRules] = useState<TargetingRule[]>([]);
+ const [tags, setTags] = useState<string[]>([]);
+ const [tagInput, setTagInput] = useState("");
  const [formData, setFormData] = useState({
   targetUrl: "",
   shortCode: "",
@@ -70,6 +74,7 @@ export function RedirectModal({ isOpen, onClose, initialData }: RedirectModalPro
   if (initialData) {
    setActive(initialData.active);
    setRules(initialData.targetingRules || []);
+   setTags(initialData.tags || []);
    setFormData({
     targetUrl: initialData.targetUrl || "",
     shortCode: initialData.shortCode || "",
@@ -84,6 +89,7 @@ export function RedirectModal({ isOpen, onClose, initialData }: RedirectModalPro
   } else {
    setActive(true);
    setRules([]);
+   setTags([]);
    setFormData({
     targetUrl: "",
     shortCode: "",
@@ -97,6 +103,24 @@ export function RedirectModal({ isOpen, onClose, initialData }: RedirectModalPro
    });
   }
  }, [initialData, isOpen]);
+
+ const handleAddTag = () => {
+  if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+   setTags([...tags, tagInput.trim()]);
+   setTagInput("");
+  }
+ };
+
+ const handleRemoveTag = (tagToRemove: string) => {
+  setTags(tags.filter(tag => tag !== tagToRemove));
+ };
+
+ const handleKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === "Enter") {
+   e.preventDefault();
+   handleAddTag();
+  }
+ };
 
  const handleInputChange = (field: string, value: string) => {
   setFormData((prev) => ({ ...prev, [field]: value }));
@@ -137,6 +161,7 @@ export function RedirectModal({ isOpen, onClose, initialData }: RedirectModalPro
      ogImage: formData.ogImage,
      password: formData.password,
      targetingRules: rules,
+     tags,
     });
     mutate(`/api/redirects/${initialData.id}`);
    } else {
@@ -152,13 +177,14 @@ export function RedirectModal({ isOpen, onClose, initialData }: RedirectModalPro
      ogImage: formData.ogImage,
      password: formData.password,
      targetingRules: rules.length > 0 ? rules : undefined,
+     tags: tags.length > 0 ? tags : undefined,
     });
    }
 
    mutate("/api/redirects");
    onClose();
-  } catch (error) {
-   console.error(error);
+  } catch {
+   // Error handling
   } finally {
    setIsLoading(false);
   }
@@ -403,6 +429,36 @@ export function RedirectModal({ isOpen, onClose, initialData }: RedirectModalPro
              <p className="text-xs mt-1">Click &quot;Add Rule&quot; to get started.</p>
             </div>
            )}
+          </div>
+         </div>
+        </Tab>
+        <Tab key="tags" title="Tags">
+         <div className="flex flex-col gap-6 pt-4">
+          <div className="flex flex-col gap-2">
+           <Input
+            description="Press Enter to add a tag"
+            label="Add Tags"
+            labelPlacement="outside"
+            placeholder="marketing, social, promo..."
+            value={tagInput}
+            variant="bordered"
+            onKeyDown={handleKeyDown}
+            onValueChange={setTagInput}
+           />
+           <div className="flex flex-wrap gap-2 mt-2">
+            {tags.map((tag, index) => (
+             <Chip
+              key={index}
+              variant="flat"
+              onClose={() => handleRemoveTag(tag)}
+             >
+              {tag}
+             </Chip>
+            ))}
+            {tags.length === 0 && (
+             <p className="text-sm text-default-400 italic">No tags added yet.</p>
+            )}
+           </div>
           </div>
          </div>
         </Tab>

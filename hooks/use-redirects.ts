@@ -50,6 +50,7 @@ export async function createRedirect(data: {
 	ogImage?: string;
 	password?: string;
 	targetingRules?: any[];
+	tags?: string[];
 }) {
 	const res = await fetch("/api/redirects", {
 		method: "POST",
@@ -80,6 +81,7 @@ export async function updateRedirect(
 		ogImage?: string;
 		password?: string;
 		targetingRules?: any[];
+		tags?: string[];
 	},
 ) {
 	const res = await fetch(`/api/redirects/${id}`, {

@@ -61,6 +61,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 			ogImage,
 			password,
 			targetingRules,
+			tags,
 		} = body;
 
 		const redirect = await prisma.redirect.update({
@@ -76,6 +77,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 				ogDescription,
 				ogImage,
 				password: password || null,
+				tags: tags || undefined,
 				targetingRules: targetingRules
 					? {
 							deleteMany: {},

@@ -2,8 +2,8 @@
 
 import { Button } from "@heroui/button";
 import { useDisclosure } from "@heroui/modal";
+import { Plus } from "lucide-react";
 
-import { PlusIcon } from "./icons";
 import { RedirectModal } from "./redirect-modal";
 
 export function CreateRedirectModal() {
@@ -11,7 +11,12 @@ export function CreateRedirectModal() {
 
  return (
   <>
-   <Button color="primary" startContent={<PlusIcon />} onPress={onOpen}>
+   <Button
+    className="font-medium shadow-md"
+    color="primary"
+    startContent={<Plus size={18} />}
+    onPress={onOpen}
+   >
     Create Redirect
    </Button>
    <RedirectModal isOpen={isOpen} onClose={onClose} />
