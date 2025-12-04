@@ -22,6 +22,9 @@ model Redirect {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   clicks      Click[]
+  targetingRules TargetingRule[]
+  tags        String[]
+  qrCodeUrl   String?
 
   @@index([userId])
 }
@@ -39,6 +42,18 @@ model Click {
   referrer    String?
   country     String?
   city        String?
+
+  @@index([redirectId])
+}
+
+model TargetingRule {
+  id          String   @id @default(cuid())
+  redirectId  String
+  redirect    Redirect @relation(fields: [redirectId], references: [id], onDelete: Cascade)
+  type        String   // "device" or "geo"
+  key         String   // "ios", "android", "US", "GB", etc.
+  targetUrl   String
+  createdAt   DateTime @default(now())
 
   @@index([redirectId])
 }
