@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
 
@@ -9,12 +10,16 @@ export async function POST(request: Request): Promise<NextResponse> {
 			body,
 			request,
 			onBeforeGenerateToken: async (pathname, clientPayload) => {
-				// Generate a client token for the browser to upload the file
-				// ⚠️ Authenticate and authorize users here, not in the browser
+				const { isAuthenticated } = await auth();
+
+				if (!isAuthenticated) {
+					throw new Error("Unauthorized");
+				}
+
 				return {
 					allowedContentTypes: ["image/jpeg", "image/png", "image/gif"],
 					tokenPayload: JSON.stringify({
-						// optional, sent to your server on upload completion
+						clientPayload,
 					}),
 				};
 			},
